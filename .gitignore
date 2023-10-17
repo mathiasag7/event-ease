@@ -10,3 +10,6 @@ wheels/
 .venv
 .credentials/
 token.pickle
+*DS.Store
+.DS.Store
+.env
