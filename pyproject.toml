@@ -1,0 +1,43 @@
+[project]
+name = "dj-google-apis"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "mathiasag7", email = "mathiasag07@gmail.com" }
+]
+dependencies = [
+    "django",
+    "google-api-python-client",
+    "google-auth",
+    "google-auth-httplib2>=0.1.1",
+    "dateparser>=1.1.8",
+    "pendulum>=2.1.2",
+    "gcsa>=2.1.0",
+    "django-crispy-forms>=2.1",
+    "crispy-bootstrap5>=0.7",
+    "django-htmx>=1.17.0",
+]
+
+readme = "README.md"
+requires-python = ">= 3.8"
+
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "black",
+    "autoflake",
+    "djlint",
+    "reorder-python-imports",
+    "django-browser-reload>=1.11.0",
+    "django-extensions>=3.2.3",
+    "ruff",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true

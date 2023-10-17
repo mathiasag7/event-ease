@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h4>Calendar Event Creation</h1>
+    <div class="container mt-4">
+<form action="{{ url }}" method="post">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <button class="form-control btn btn-primary" type="submit">Search</button>
+</form>
+    </div>
+
+{% endblock content %}
