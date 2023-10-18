@@ -1,6 +1,9 @@
 import datetime
 from django import forms
 
+from apps.calendars.recurrences import clean_recurrence
+from dynamic_forms import DynamicField, DynamicFormMixin
+
 
 LAVENDER = (1, "#A4BDFC")
 SAGE = (2, "#7AE7BF")
@@ -29,6 +32,8 @@ COLOR_CHOICES = [
 
 ]
 
+now = datetime.datetime.now()
+
 
 class CalendarSearchForm(forms.Form):
     search = forms.CharField(
@@ -54,28 +59,44 @@ class CalendarSearchForm(forms.Form):
         ),
     )
 
+class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
 
-class CalendarCreateEditForm(forms.Form):
+    from django.urls import reverse_lazy
 
     summary = forms.CharField(
         label="Summary",
     )
     description = forms.CharField(label="Description", required=False)
 
-    start = forms.DateTimeField(
+    start = DynamicField(
+        forms.DateTimeField,
         label="Start",
+        required=False,
+        # initial=now,
         widget=forms.DateTimeInput(
             attrs={
                 "type": "datetime-local",
             }
-        ),
+        )
     )
-    end = forms.DateTimeField(
+    end = DynamicField(
+        forms.DateTimeField,
         label="End",
         required=False,
+        # initial=now + datetime.timedelta(days=1),
         widget=forms.DateTimeInput(
             attrs={
                 "type": "datetime-local",
+            }
+        )
+    )
+    recurrence = DynamicField(
+        forms.CharField,
+        label="Recurrence",
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "class": "recurrence-widget"
             }
         ),
     )
@@ -84,62 +105,39 @@ class CalendarCreateEditForm(forms.Form):
         label="Color",
         required=False,
     )
-    recurrence  = forms.CharField(
-        label="Recurrence",
-        required=False,
-        
-    )
 
     def clean(self):
         cleaned_data = super().clean()
         start = cleaned_data.get("start")
         end = cleaned_data.get("end")
-        if not start:
-            raise forms.ValidationError("Start is required.")
-        if start < datetime.datetime.now(tz=start.tzinfo):
-            raise forms.ValidationError("Start must be in the future.")
-        if end and start > end:
-            raise forms.ValidationError("Start must be before end.")
+        recurrence = cleaned_data.get("recurrence")
+        data = {}
+        if not start and not recurrence:
+            raise forms.ValidationError("Start or recurrence is required.")
+        elif start:
+            if start < datetime.datetime.now(tz=start.tzinfo):
+                raise forms.ValidationError("Start must be in the future.")
+            if end and start > end:
+                raise forms.ValidationError("Start must be before end.")
+            timezone = start.tzinfo
+            data |= {
+                "start": start,
+                "end": end.astimezone(timezone) if end else None,
+                "timezone": str(timezone),
+            }
 
-        timezone = start.tzinfo
-        return {
+        if recurrence:
+            recurrence_rule = clean_recurrence(recurrence)[0]
+            recurrence_dict = clean_recurrence(recurrence)[1]
+            data |= {
+                "recurrence_rule": recurrence_rule,
+                "recurrence": recurrence_dict
+            }
+
+        
+        data |= {
             "summary": cleaned_data.get("summary"),
             "description": cleaned_data.get("description"),
-            "start": start,
-            "end": end.astimezone(timezone) if end else None,
             "color": str(cleaned_data.get("color")),
-            "timezone": str(timezone),
         }
-
-
-    # location = forms.CharField(
-    #     label="Location",
-    #     required=False
-    # )
-    # recurrence = forms.CharField(
-    #     label="Recurrence",
-    #     required=False
-    # )
-    # visibility = forms.ChoiceField(
-    #     label="Visibility",
-    #     choices=[
-    #         (Visibility.DEFAULT, "Default"),
-    #         (Visibility.PUBLIC, "Public"),
-    #         (Visibility.PRIVATE, "Private"),
-    #     ],
-    #     required=False
-    # )
-    # attendees = forms.CharField(
-    #     label="Attendees",
-    # )
-    # email = forms.EmailField(
-    #     label="Email"
-    # )
-    # display_name = forms.CharField(label="Display Name", required=False)
-    # comment = forms.CharField(label="Comment", required=False)
-    # optional = forms.BooleanField(
-    #     label="Optional",
-    #     required=False
-    # )
-    # is_resource = forms.BooleanField(label="Is Resource", required=False)
-    # additional_guests = forms.IntegerField(label="Additional Guests", required=False)
+        return data

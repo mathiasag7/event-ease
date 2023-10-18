@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.event import Event
+from gcsa.recurrence import Recurrence
 from django.shortcuts import redirect, render
 from .forms import CalendarCreateEditForm, CalendarSearchForm
 from django.core.paginator import Paginator
@@ -57,6 +58,16 @@ def get_event(request: HttpRequest, event_id: str) -> HttpResponse:
     return render(request, 'calendars/details.html', {'event': event})
 
 
+def create_recurrence(event, r_rule, r_data):
+    if r_data is not None:
+        recurrence = (
+            [f'{r_rule}:{Recurrence._times(**r_data)}']
+            if r_rule in ("RDATE", "EXDATE")
+            else [f'{r_rule}:{Recurrence._rule(**r_data)}']
+        )
+        event.recurrence = recurrence
+    return event
+
 
 def create_event(request: HttpRequest) -> HttpResponse:
     form = CalendarCreateEditForm(request.POST or None)
@@ -69,10 +80,16 @@ def create_event(request: HttpRequest) -> HttpResponse:
             timezone=form.cleaned_data.get("timezone"),
             color_id=form.cleaned_data.get("color"),
         )
+        event = create_recurrence(event, form.cleaned_data.get("recurrence_rule"), form.cleaned_data.get("recurrence"))
         gc = _connect()
         gc.add_event(event)
         return redirect(reverse("calendars:list"))
     return TemplateResponse(request, "calendars/create_edit.html", {"form": form, "url": reverse("calendars:create"),})
+
+
+# def recurrence(request: HttpRequest) -> HttpResponse:
+#     form = CalendarCreateEditForm(initial=request.GET, context={"add_custom_recurrence": request.GET.get("add_custom_recurrence")})
+#     return HttpResponse(as_crispy_form(form))
 
 
 # TODO Rename this here and in `update_event`
@@ -83,6 +100,9 @@ def update_changed_event(form, event, gc):
     event.end=form.cleaned_data.get("end")
     event.timezone=form.cleaned_data.get("timezone")
     event.color_id=form.cleaned_data.get("color")
+
+    event = create_recurrence(event, form.cleaned_data.get("recurrence_rule"), form.cleaned_data.get("recurrence"))
+    gc = _connect()
     gc.update_event(event)
     return redirect(reverse("calendars:list"))
 
@@ -91,7 +111,6 @@ def update_event(request: HttpRequest, event_id: str) -> HttpResponse:
     gc = _connect()
     try:
         event = gc.get_event(event_id)
-        print(event)
     except Exception as e:
         raise Http404() from e
     form = CalendarCreateEditForm(request.POST or None, initial={"id": event.id, "color": event.color_id, "summary": event.summary, "description": event.description, "start": event.start, "end": event.end})

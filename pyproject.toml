@@ -16,6 +16,8 @@ dependencies = [
     "django-crispy-forms>=2.1",
     "crispy-bootstrap5>=0.7",
     "django-htmx>=1.17.0",
+    "django-recurrence>=1.11.1",
+    "django-forms-dynamic>=1.0.0",
 ]
 
 readme = "README.md"

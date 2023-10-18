@@ -10,4 +10,5 @@ urlpatterns = [
     path('<event_id>/delete/', views.delete_event, name='delete'),
     path('<event_id/', views.get_event, name='details'),
     path('create/', views.create_event, name='create'),
+    # path("recurrence/", views.recurrence, name="recurrence"),
 ]

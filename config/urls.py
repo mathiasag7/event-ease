@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include,re_path
 from django.conf.urls.static import static
+from django.views.i18n import JavaScriptCatalog
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +29,12 @@ if settings.DEBUG:
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
+
+js_info_dict = {
+    'packages': ('recurrence', ),
+}
+
+
+urlpatterns += [
+    re_path(r'^jsi18n/$', JavaScriptCatalog.as_view(), js_info_dict),
+]
