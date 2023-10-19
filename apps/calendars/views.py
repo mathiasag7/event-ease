@@ -4,12 +4,15 @@ from django.urls import reverse
 
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.event import Event
+
+from django.core.paginator import EmptyPage
 from gcsa.recurrence import Recurrence
 from django.shortcuts import redirect, render
 from .forms import CalendarCreateEditForm, CalendarSearchForm
 from django.core.paginator import Paginator
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
+from django.core.paginator import PageNotAnInteger
 from django_htmx.http import HttpResponseClientRedirect
 from django.views.decorators.csrf import csrf_exempt
 
@@ -18,10 +21,22 @@ def _connect():
     return GoogleCalendar("testinfront7@gmail.com", credentials_path="/Users/ace/projects/dj_google_apis/.credentials/id_token.json") # type: ignore
 
 
-def pagination(request: HttpRequest, objects, number: int = 10):
-    paginator = Paginator(objects, number)
+def pagination(request: HttpRequest, objects, number: int = 15):
+    pages = Paginator(objects, number)
     page_number = request.GET.get("page")
-    return paginator.get_page(page_number)
+    page_number = page_number
+
+    try:
+        events = pages.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        events = pages.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        events = pages.page(pages.num_pages)
+
+    events.adjusted_elided_pages = pages.get_elided_page_range(page_number)
+    return events
 
 
 # TODO Rename this here and in `calendars`

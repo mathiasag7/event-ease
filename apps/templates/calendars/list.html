@@ -69,21 +69,35 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="d-flex justify-content-end mx-3 pagination">
-            <span class="step-links">
-                {% if events.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ events.previous_page_number }}">previous</a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+            {% if events.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ events.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            {% for num in events.adjusted_elided_pages %}
+                {% if num == events.paginator.ELLIPSIS %}
+                    <li class="page-item">
+                        <a href="#" class="page-link">{{ num }}</a>
+                    </li>
+                {% else %}
+                    {% if events.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link">{{ events.number }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
-        
-                <span class="current">
-                    Page {{ events.number }} of {{ events.paginator.num_pages }}.
-                </span>
-        
-                {% if events.has_next %}
-                    <a href="?page={{ events.next_page_number }}">next</a>
-                    <a href="?page={{ events.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+            {% endfor %}
+              {% if events.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ events.next_page_number }}">Next</a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
 {% endblock content %}
