@@ -1,6 +1,8 @@
 import datetime as dt
-# possible repetition frequencies
+
 from gcsa.recurrence import _DayOfTheWeek
+
+# possible repetition frequencies
 
 
 recurrence_keys = {
@@ -14,14 +16,13 @@ recurrence_keys = {
     "BYMONTHDAY": "by_month_day",
     "BYSETPOS": "by_set_pos",
     "WKST": "week_start",
-    
 }
 
 
 def clean_recurrence(recurrence) -> tuple:
     recurrence_dict = {}
     datetime_format = "%Y%m%dT%H%M%SZ"
-    
+
     # split it to remove the str "RULE:"
     recurrence_rule = recurrence.split(":")[0]
     recurrence = recurrence.split(":")[1]
@@ -30,14 +31,15 @@ def clean_recurrence(recurrence) -> tuple:
     else:
         for r in recurrence.split(";"):
 
-        # split it to remove the str "="
+            # split it to remove the str "="
             r = r.split("=")
 
             # pass the key of the dict to avoid error by correspondinging it to gcsa key
             r[0] = recurrence_keys.get(r[0]) or r[0].lower()
             recurrence_dict[r[0]] = r[1]
 
-            # split it to find if there is more than one value, if so then make a list with it.
+            # split it to find if there is more than one value,
+            #  if so then make a list with it.
             if r[1].find(",") != -1:
                 if r[0] == "by_week_day":
                     r[1] = [_DayOfTheWeek(_) for _ in r[1].split(",")]
@@ -50,5 +52,5 @@ def clean_recurrence(recurrence) -> tuple:
             elif r[0] in ("count", "interval", "by_month_day", "by_year_day"):
                 r[1] = int(r[1])
             recurrence_dict[r[0]] = r[1]
-    
+
     return recurrence_rule, recurrence_dict

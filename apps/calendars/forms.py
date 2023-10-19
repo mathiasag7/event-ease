@@ -1,8 +1,10 @@
 import datetime
+
 from django import forms
+from dynamic_forms import DynamicField
+from dynamic_forms import DynamicFormMixin
 
 from apps.calendars.recurrences import clean_recurrence
-from dynamic_forms import DynamicField, DynamicFormMixin
 
 
 LAVENDER = (1, "#A4BDFC")
@@ -29,7 +31,6 @@ COLOR_CHOICES = [
     BLUEBERRY,
     BASIL,
     TOMATO,
-
 ]
 
 now = datetime.datetime.now()
@@ -59,6 +60,7 @@ class CalendarSearchForm(forms.Form):
         ),
     )
 
+
 class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
 
     from django.urls import reverse_lazy
@@ -77,7 +79,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             attrs={
                 "type": "datetime-local",
             }
-        )
+        ),
     )
     end = DynamicField(
         forms.DateTimeField,
@@ -88,17 +90,13 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             attrs={
                 "type": "datetime-local",
             }
-        )
+        ),
     )
     recurrence = DynamicField(
         forms.CharField,
         label="Recurrence",
         required=False,
-        widget=forms.Textarea(
-            attrs={
-                "class": "recurrence-widget"
-            }
-        ),
+        widget=forms.Textarea(attrs={"class": "recurrence-widget"}),
     )
     color = forms.ChoiceField(
         choices=COLOR_CHOICES,
@@ -129,12 +127,8 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
         if recurrence:
             recurrence_rule = clean_recurrence(recurrence)[0]
             recurrence_dict = clean_recurrence(recurrence)[1]
-            data |= {
-                "recurrence_rule": recurrence_rule,
-                "recurrence": recurrence_dict
-            }
+            data |= {"recurrence_rule": recurrence_rule, "recurrence": recurrence_dict}
 
-        
         data |= {
             "summary": cleaned_data.get("summary"),
             "description": cleaned_data.get("description"),

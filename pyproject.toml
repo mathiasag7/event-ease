@@ -18,6 +18,7 @@ dependencies = [
     "django-htmx>=1.17.0",
     "django-recurrence>=1.11.1",
     "django-forms-dynamic>=1.0.0",
+    "pre-commit>=3.5.0",
 ]
 
 readme = "README.md"

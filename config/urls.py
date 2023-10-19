@@ -14,16 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.contrib import admin
-from django.urls import path, include,re_path
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include
+from django.urls import path
+from django.urls import re_path
 from django.views.i18n import JavaScriptCatalog
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-path("calendars/", include("apps.calendars.urls")),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path("admin/", admin.site.urls),
+    path("calendars/", include("apps.calendars.urls")),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     urlpatterns += [
@@ -31,10 +33,10 @@ if settings.DEBUG:
     ]
 
 js_info_dict = {
-    'packages': ('recurrence', ),
+    "packages": ("recurrence",),
 }
 
 
 urlpatterns += [
-    re_path(r'^jsi18n/$', JavaScriptCatalog.as_view(), js_info_dict),
+    re_path(r"^jsi18n/$", JavaScriptCatalog.as_view(), js_info_dict),
 ]

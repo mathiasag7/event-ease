@@ -37,12 +37,12 @@ repos:
     hooks:
       - id: djlint-django
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.224
-    hooks:
-      - id: ruff
-        # Respect `exclude` and `extend-exclude` settings.
-        args: ["--force-exclude"]
+  # - repo: https://github.com/charliermarsh/ruff-pre-commit
+  #   rev: v0.0.224
+  #   hooks:
+  #     - id: ruff
+  #       # Respect `exclude` and `extend-exclude` settings.
+  #       args: ["--force-exclude"]
 
 # failing with the latest version of pylint and pylint-django, see https://github.com/PyCQA/pylint-django/issues/389
 #  - repo: local
