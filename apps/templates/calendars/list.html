@@ -20,12 +20,12 @@
     </style>
 
 {% block content %}
-        <div class="d-flex justify-content-start my-4">
+        <div class="d-flex justify-content-between my-4">
             <h4>Calendar Events</h4>
             <a class="btn btn-secondary ms-2" role="button" href="{% url 'calendars:create' %}">Create Event</a>
         </div>
-            <form class="d-flex" action="." method="get">
-                    {{ form | crispy }}
+            <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" action="." method="get">
+                {{ form | crispy }}
                 <div class="mb-3">
                     <label class="form-label">.</label>
                 <button class="form-control btn btn-primary" type="submit">Search</button>
@@ -69,35 +69,4 @@
                 {% endfor %}
             </div>
         </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-            {% if events.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ events.previous_page_number }}">Previous</a>
-                </li>
-            {% endif %}
-            {% for num in events.adjusted_elided_pages %}
-                {% if num == events.paginator.ELLIPSIS %}
-                    <li class="page-item">
-                        <a href="#" class="page-link">{{ num }}</a>
-                    </li>
-                {% else %}
-                    {% if events.number == num %}
-                        <li class="page-item active">
-                            <a class="page-link">{{ events.number }}</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item">
-                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-              {% if events.has_next %}
-              <li class="page-item">
-                <a class="page-link" href="?page={{ events.next_page_number }}">Next</a>
-              </li>
-              {% endif %}
-            </ul>
-          </nav>
 {% endblock content %}

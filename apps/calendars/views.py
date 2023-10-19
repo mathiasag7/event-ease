@@ -23,7 +23,7 @@ def _connect():
 
 def pagination(request: HttpRequest, objects, number: int = 15):
     pages = Paginator(objects, number)
-    page_number = request.GET.get("page")
+    page_number = request.GET.get("page", 1)
     page_number = page_number
 
     try:
