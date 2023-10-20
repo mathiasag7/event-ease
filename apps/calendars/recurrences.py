@@ -20,15 +20,14 @@ recurrence_keys = {
 
 
 def clean_recurrence(recurrence) -> tuple:
+    recurrence = str(recurrence)
     recurrence_dict = {}
-    datetime_format = "%Y%m%dT%H%M%SZ"
-
     # split it to remove the str "RULE:"
     recurrence_rule = recurrence.split(":")[0]
     recurrence = recurrence.split(":")[1]
-    if recurrence_rule in ("RDATE", "EXDATE"):
-        recurrence_dict["dts"] = dt.datetime.strptime(recurrence, datetime_format)
-    else:
+    if recurrence_rule in ("RRULE"):
+        datetime_format = "%Y%m%dT%H%M%SZ"
+
         for r in recurrence.split(";"):
 
             # split it to remove the str "="

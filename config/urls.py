@@ -18,8 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
-from django.urls import re_path
 from django.views.i18n import JavaScriptCatalog
+
 
 
 urlpatterns = [
@@ -27,16 +27,15 @@ urlpatterns = [
     path("calendars/", include("apps.calendars.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+
+urlpatterns += [
+    path('jsi18n/', JavaScriptCatalog.as_view()),
+]
+
+
 if settings.DEBUG:
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
 
-js_info_dict = {
-    "packages": ("recurrence",),
-}
 
-
-urlpatterns += [
-    re_path(r"^jsi18n/$", JavaScriptCatalog.as_view(), js_info_dict),
-]

@@ -3,21 +3,21 @@ import datetime
 from django import forms
 from dynamic_forms import DynamicField
 from dynamic_forms import DynamicFormMixin
-
 from apps.calendars.recurrences import clean_recurrence
+from apps.recurrence import forms as f
 
 
-LAVENDER = (1, "#A4BDFC")
-SAGE = (2, "#7AE7BF")
-GRAPE = (3, "#DBADFF")
-FLAMINGO = (4, "#FF887C")
-BANANA = (5, "#FBD75B")
-TANGERINE = (6, "#FFB878")
-PEACOCK = (7, "#46D6DB")
-GRAPHITE = (8, "#E1E1E1")
-BLUEBERRY = (9, "#5484ED")
-BASIL = (10, "#51B749")
-TOMATO = (11, "#DC2127")
+LAVENDER = (1, "LAVENDER")
+SAGE = (2, "SAGE")
+GRAPE = (3, "GRAPE")
+FLAMINGO = (4, "FLAMINGO")
+BANANA = (5, "BANANA")
+TANGERINE = (6, "TANGERINE")
+PEACOCK = (7, "PEACOCK")
+GRAPHITE = (8, "GRAPHITE")
+BLUEBERRY = (9, "BLUEBERRY")
+BASIL = (10, "BASIL")
+TOMATO = (11, "TOMATO")
 
 COLOR_CHOICES = [
     LAVENDER,
@@ -32,6 +32,21 @@ COLOR_CHOICES = [
     BASIL,
     TOMATO,
 ]
+
+COLOR_VALUES = {
+    "LAVENDER": "#A4BDFC",
+    "SAGE": "#7AE7BF",
+    "GRAPE": "#DBADFF",
+    "FLAMINGO": "#FF887C",
+    "BANANA": "#FBD75B",
+    "TANGERINE": "#FFB878",
+    "PEACOCK": "#46D6DB",
+    "GRAPHITE": "#E1E1E1",
+    "BLUEBERRY": "#5484ED",
+    "BASIL": "#51B749",
+    "TOMATO": "#DC2127",
+    
+}
 
 now = datetime.datetime.now()
 
@@ -92,12 +107,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             }
         ),
     )
-    recurrence = DynamicField(
-        forms.CharField,
-        label="Recurrence",
-        required=False,
-        widget=forms.Textarea(attrs={"class": "recurrence-widget"}),
-    )
+    recurrence = f.RecurrenceField()
     color = forms.ChoiceField(
         choices=COLOR_CHOICES,
         label="Color",

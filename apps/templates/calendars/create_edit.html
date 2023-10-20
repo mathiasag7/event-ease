@@ -2,36 +2,7 @@
 
 {% load static %}
 {% load crispy_forms_tags %}
-
 {% block extra_css %}
-<meta name="robots" content="NONE,NOARCHIVE" />
-<link rel="stylesheet" href="{% static 'admin/css/base.css' %}" />
-<link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}"/>
-<link rel="stylesheet" href="{% static 'admin/css/nav_sidebar.css' %}"/>
-<link rel="stylesheet" href="{% static 'admin/css/forms.css' %}"/>
-<link href="{% static 'recurrence/css/recurrence.css' %}" media="all" rel="stylesheet"/>
-<link rel="stylesheet" href="{% static 'admin/css/responsive.css' %}"/>
-
-<script src="/admin/jsi18n/"></script>
-<script ecommerce-type="extend-native-history-api">
-    (()=>{const e=history.pushState,t=history.replaceState,a=history.back,r=history.forward;function n(){window.postMessage({_custom_type_:"CUSTOM_ON_URL_CHANGED"})}history.pushState=function(){e.apply(history,arguments),n()},history.replaceState=function(){t.apply(history,arguments),n()},history.back=function(){a.apply(history,arguments),n()},history.forward=function(){r.apply(history,arguments),n()}})()
-</script>
-<script src="{% static 'admin/js/theme.js' %}" defer=""></script>
-<script src="{% static 'admin/js/nav_sidebar.js' %}" defer=""></script>
-<script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-<script src="{% static 'admin/js/jquery.init.js' %}"></script>
-<script src="{% static 'admin/js/core.js' %}"></script>
-<script src="{% static 'recurrence/js/recurrence.js' %}"></script>
-<script src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
-<script src="{% static 'recurrence/js/recurrence-widget.js' %}"></script>
-<script src="{% static 'admin/js/actions.js' %}"></script>
-<script src="{% static 'recurrence/js/recurrence-widget.init.js' %}"></script>
-<script src="{% static 'admin/js/urlify.js' %}"></script>
-<script src="{% static 'admin/js/prepopulate.js' %}"></script>
-<script src="{% static 'admin/js/vendor/xregexp/xregexp.js' %}"></script>
-<script>
-  (function inject(e){function SendXHRCandidate(e,t,n,r,i){try{var o="detector",s={posdMessageId:"PANELOS_MESSAGE",posdHash:(Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)).substring(0,22),type:"VIDEO_XHR_CANDIDATE",from:o,to:o.substring(0,6),content:{requestMethod:e,url:t,type:n,content:r}};i&&i[0]&&i[0].length&&(s.content.encodedPostBody=i[0]),window.postMessage(s,"*")}catch(e){}}var t=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(){this.requestMethod=arguments[0],t.apply(this,arguments)};var n=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(){var t=Object.assign(arguments,{}),r=this.onreadystatechange;return this.onreadystatechange=function(){if(4!==this.readyState||function isFrameInBlackList(t){return e.some((function(e){return t.includes(e)}))}(this.responseURL)||setTimeout(SendXHRCandidate(this.requestMethod,this.responseURL,this.getResponseHeader("content-type"),this.response,t),0),r)return r.apply(this,arguments)},n.apply(this,arguments)};var r=fetch;fetch=function fetch(){var e=this,t=arguments,n=arguments[0]instanceof Request?arguments[0].url:arguments[0],i=arguments[0]instanceof Request?arguments[0].method:"GET";return new Promise((function(o,s){r.apply(e,t).then((function(e){if(e.body instanceof ReadableStream){var t=e.json;e.json=function(){var r=arguments,o=this;return new Promise((function(s,a){t.apply(o,r).then((function(t){setTimeout(SendXHRCandidate(i,n,e.headers.get("content-type"),JSON.stringify(t)),0),s(t)})).catch((function(e){a(e)}))}))};var r=e.text;e.text=function(){var t=arguments,o=this;return new Promise((function(s,a){r.apply(o,t).then((function(t){setTimeout(SendXHRCandidate(i,n,e.headers.get("content-type"),t),0),s(t)})).catch((function(e){a(e)}))}))}}o.apply(this,arguments)})).catch((function(){s.apply(this,arguments)}))}))}})(["facebook.com/","twitter.com/","youtube-nocookie.com/embed/","//vk.com/","//www.vk.com/","//linkedin.com/","//www.linkedin.com/","//instagram.com/","//www.instagram.com/","//www.google.com/recaptcha/api2/","//hangouts.google.com/webchat/","//www.google.com/calendar/","//www.google.com/maps/embed","spotify.com/","soundcloud.com/","//player.vimeo.com/","//disqus.com/","//tgwidget.com/","//js.driftt.com/","friends2follow.com","/widget","login","//video.bigmir.net/","blogger.com","//smartlock.google.com/","//keep.google.com/","/web.tolstoycomments.com/","moz-extension://","chrome-extension://","/auth/","//analytics.google.com/","adclarity.com","paddle.com/checkout","hcaptcha.com","recaptcha.net","2captcha.com","accounts.google.com","www.google.com/shopping/customerreviews","buy.tinypass.com","gstatic.com","secureir.ebaystatic.com","docs.google.com","contacts.google.com","github.com","mail.google.com","chat.google.com","audio.xpleer.com","keepa.com"]);
-</script>
 {% endblock extra_css %}
 
 {% block content %}
@@ -48,3 +19,9 @@
     </div>
 
 {% endblock content %}
+
+
+{% block extra_js %}
+    
+{% endblock extra_js %}
+    

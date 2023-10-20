@@ -1,4 +1,5 @@
 import datetime as dt
+import os
 
 from django.conf import settings
 from django.core.paginator import EmptyPage
@@ -23,11 +24,14 @@ from .forms import CalendarSearchForm
 
 
 def _connect():
-    credentials_path = f"{settings.BASE_DIR}.credentials/id_token.json"
-    return GoogleCalendar(
-        "testinfront7@gmail.com",
-        credentials_path,
-    )
+    credentials_path = f"{settings.BASE_DIR}/.credentials/id_token.json"
+    return GoogleCalendar(credentials_path=credentials_path)
+
+def _disconnect() -> None:
+    old_token = f"{settings.BASE_DIR}/.credentials/token.pickle"
+    if old_token and os.path.exists(old_token):
+        os.remove(old_token)
+    return None
 
 
 def pagination(request: HttpRequest, objects, number: int = 15):
@@ -88,7 +92,7 @@ def get_event(request: HttpRequest, event_id: str) -> HttpResponse:
 def create_recurrence(event, r_rule, r_data):
     if r_data is not None:
         recurrence = (
-            [f"{r_rule}:{Recurrence._times(**r_data)}"]
+            []
             if r_rule in ("RDATE", "EXDATE")
             else [f"{r_rule}:{Recurrence._rule(**r_data)}"]
         )
@@ -187,3 +191,8 @@ def delete_event(request: HttpRequest, event_id: str) -> HttpResponse:
     except Exception as e:
         raise Http404() from e
     return HttpResponseClientRedirect(reverse("calendars:list"))
+
+
+def switch_user(request: HttpRequest) -> HttpResponse:
+    _disconnect()
+    return redirect(reverse("calendars:list"))

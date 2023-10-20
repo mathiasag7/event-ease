@@ -1,0 +1,53 @@
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <span><i class="bi bi-info-circle text-primary mt-2 pe-1"></i>
+    {{ events.paginator.count }}
+    {% if events.paginator.count == 0 %}
+        trouvé
+    {% else %}
+        trouvé{{ events.paginator.count|pluralize }}
+    {% endif %}
+    </span>
+    {% if events.paginator.num_pages > 1 %}
+        <nav aria-label="...">
+            <ul class="pagination mb-0">
+                {% if events.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ events.previous_page_number }}"
+                        class="page-link"
+                        aria-label="Previous">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                    </li>
+                {% endif %}
+                {% for num in events.adjusted_elided_pages %}
+                    {% if num == events.paginator.ELLIPSIS %}
+                        <li class="page-item">
+                            <a href="#" class="page-link">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        {% if events.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link">{{ events.number }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% if events.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ events.next_page_number }}"
+                        class="page-link"
+                        aria-label="Next">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    </div>
+
