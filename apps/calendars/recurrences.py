@@ -20,7 +20,6 @@ recurrence_keys = {
 
 
 def clean_recurrence(recurrence) -> tuple:
-    recurrence = str(recurrence)
     recurrence_dict = {}
     # split it to remove the str "RULE:"
     recurrence_rule = recurrence.split(":")[0]

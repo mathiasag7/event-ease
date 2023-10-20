@@ -526,11 +526,9 @@ recurrence.widget.Widget.prototype = {
     },
 
     add_rule: function(rule) {
-        if (this.data.rrules.length < 1) {
-            var rule = rule || new recurrence.Rule(this.default_freq);
-            this.data.rrules.push(rule);
-            this.add_rule_panel(recurrence.widget.INCLUSION, rule).expand();
-        }
+        var rule = rule || new recurrence.Rule(this.default_freq);
+        this.data.rrules.push(rule);
+        this.add_rule_panel(recurrence.widget.INCLUSION, rule).expand();
     },
 
     update: function() {

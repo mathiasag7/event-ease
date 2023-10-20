@@ -107,7 +107,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             }
         ),
     )
-    recurrence = f.RecurrenceField()
+    recurrence = f.RecurrenceField(max_rrules=1, required=False)
     color = forms.ChoiceField(
         choices=COLOR_CHOICES,
         label="Color",
@@ -135,6 +135,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             }
 
         if recurrence:
+            recurrence = str(recurrence)
             recurrence_rule = clean_recurrence(recurrence)[0]
             recurrence_dict = clean_recurrence(recurrence)[1]
             data |= {"recurrence_rule": recurrence_rule, "recurrence": recurrence_dict}
