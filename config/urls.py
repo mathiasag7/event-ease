@@ -24,7 +24,7 @@ from django.views.i18n import JavaScriptCatalog
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("calendars/", include("apps.calendars.urls")),
+    path("", include("apps.calendars.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

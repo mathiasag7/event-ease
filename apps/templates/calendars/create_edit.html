@@ -6,7 +6,7 @@
 {% endblock extra_css %}
 
 {% block content %}
-<h4>Calendar Event Creation</h4>
+<h4>Calendar Event Form</h4>
     <div class="container mt-4">
     <form action="{{ url }}" method="post">
         {% csrf_token %}
@@ -14,7 +14,7 @@
                 {{ form.media }}
                 {{ form | crispy }}
             </div>
-        <button class="form-control btn btn-primary" type="submit">Search</button>
+        <button class="form-control btn btn-primary" type="submit">Save</button>
     </form>
     </div>
 

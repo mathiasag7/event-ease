@@ -47,7 +47,7 @@ def clean_recurrence(recurrence) -> tuple:
                 r[1] = [_DayOfTheWeek(_) for _ in r[1].split(",")]
             elif r[0] == "until":
                 r[1] = dt.datetime.strptime(r[1], datetime_format)
-            elif r[0] in ("count", "interval", "by_month_day", "by_year_day"):
+            elif r[0] in ("count", "interval", "by_month_day", "by_year_day", "by_month"):
                 r[1] = int(r[1])
             recurrence_dict[r[0]] = r[1]
 
