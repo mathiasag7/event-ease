@@ -54,9 +54,10 @@ def pagination(request: HttpRequest, objects, number: int = 15):
 
 # TODO Rename this here and in `calendars`
 def calendar_form_view(form, gc):
+    _today = dt.datetime.now().date()
     search = form.cleaned_data.get("search", "")
-    start = form.cleaned_data.get("start", dt.datetime.now())
-    end = form.cleaned_data.get("end", dt.datetime.now().replace(day=31, month=12))
+    start = form.cleaned_data.get("start") or _today
+    end = form.cleaned_data.get("end") or _today.replace(day=31, month=12)
     return gc.get_events(
         time_min=start,
         time_max=end,
