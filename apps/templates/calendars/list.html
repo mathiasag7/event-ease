@@ -19,12 +19,12 @@
                 </a>
             </div>
         </div>
-            <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" id="form" hx-get="." hx-target="#events_list" hx-swap="outerHTML" hx-trigger="change, keyup delay:500ms">
+            <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" id="form" hx-get="." hx-target="#events_list" hx-swap="outerHTML" hx-trigger="change, keyup delay:200ms">
                 {{ form | crispy }}
-                <div class="mb-3">
-                    <label class="form-label">.</label>
-                <button class="form-control btn btn-primary" type="submit">Search</button>
-                </div>
+                {% comment %} <div class="mb-3">
+                     <label class="form-label">.</label> 
+                <button class="form-control btn btn-primary" type="submit">Search</button> 
+                </div> {% endcomment %}
             </form>
         {% if event_search is not None %}
             Search: {{ event_search | safe }}
