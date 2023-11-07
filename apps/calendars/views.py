@@ -18,6 +18,7 @@ from django_htmx.http import HttpResponseClientRedirect
 from gcsa.event import Event
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.recurrence import Recurrence
+from render_block import render_block_to_string
 
 from .forms import CalendarCreateEditForm
 from .forms import CalendarSearchForm
@@ -26,6 +27,7 @@ from .forms import CalendarSearchForm
 def _connect():
     credentials_path = f"{settings.BASE_DIR}/.credentials/id_token.json"
     return GoogleCalendar(credentials_path=credentials_path)
+
 
 def _disconnect() -> None:
     old_token = f"{settings.BASE_DIR}/.credentials/token.pickle"
@@ -56,8 +58,8 @@ def pagination(request: HttpRequest, objects, number: int = 15):
 def calendar_form_view(form, gc):
     _today = dt.datetime.now().date()
     search = form.cleaned_data.get("search", "")
-    start = form.cleaned_data.get("start") or _today
-    end = form.cleaned_data.get("end") or _today.replace(day=31, month=12)
+    start = form.cleaned_data.get("start")
+    end = form.cleaned_data.get("end")
     return gc.get_events(
         time_min=start,
         time_max=end,
@@ -69,16 +71,23 @@ def calendar_form_view(form, gc):
 
 def list_event(request: HttpRequest) -> HttpResponse:
     gc = _connect()
+    _today = dt.datetime.now().date()
     events = gc.get_events(
-        time_min=dt.datetime.now(),
-        time_max=dt.datetime.now().replace(day=31, month=12),
+        time_min=_today,
+        time_max=_today.replace(day=31, month=12),
     )
-    form = CalendarSearchForm(request.GET)
+    form = CalendarSearchForm(
+        request.GET or None,
+        initial={"start": _today, "end": _today.replace(day=31, month=12)},
+    )
     if form.is_valid():
         events = calendar_form_view(form, gc)
     events = list(events)
     objects = pagination(request, events)
-    return render(request, "calendars/list.html", {"events": objects, "form": form})
+    context = {"events": objects, "form": form}
+    if request.headers.get("HX-Request"):
+        return HttpResponse(render_block_to_string("calendars/list.html", "events_result", context, request))
+    return TemplateResponse(request, "calendars/list.html", context)
 
 
 def get_event(request: HttpRequest, event_id: str) -> HttpResponse:

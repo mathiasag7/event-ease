@@ -48,9 +48,6 @@ COLOR_VALUES = {
     
 }
 
-now = datetime.datetime.now()
-
-
 class CalendarSearchForm(forms.Form):
     search = forms.CharField(
         label="Search",
@@ -89,7 +86,6 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
         forms.DateTimeField,
         label="Start",
         required=False,
-        # initial=now,
         widget=forms.DateTimeInput(
             attrs={
                 "type": "datetime-local",
@@ -100,7 +96,6 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
         forms.DateTimeField,
         label="End",
         required=False,
-        # initial=now + datetime.timedelta(days=1),
         widget=forms.DateTimeInput(
             attrs={
                 "type": "datetime-local",
