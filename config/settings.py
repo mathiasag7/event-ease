@@ -48,7 +48,6 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "django_htmx",
     "recurrence",
-    "django_filters",
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS

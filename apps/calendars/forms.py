@@ -1,7 +1,5 @@
 import datetime as dt
 import calendar
-from random import choice
-from typing import Any
 
 from django import forms
 from dynamic_forms import DynamicField

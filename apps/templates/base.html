@@ -24,13 +24,15 @@
     <div class="container">
         {% block content %}{% endblock content %}
     </div>
-    <script>
+    
+    {% block tom_select %}
+        <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.select, .selectmultiple').forEach((el) => {
                 let settings = {
                     placeholder: 'Rechercher ou sélectionner'
                 };
-                new TomSelect(el, settings);
+                var select = new TomSelect(el, settings);
     
             });
     
@@ -40,6 +42,9 @@
             });
         });
     </script>
+    {% endblock tom_select %}
+        
+    
     {% block extra_js %}{% endblock extra_js %}
 
 </body>

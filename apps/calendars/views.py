@@ -37,7 +37,8 @@ def _disconnect() -> None:
     return None
 
 
-def pagination(request: HttpRequest, objects, number: int = 15) -> QueryDict:
+def pagination(request: HttpRequest, objects, number: int = 16
+               ) -> QueryDict:
     parm_copy: QueryDict = request.GET.copy()
     try:
         page_number = int(parm_copy.pop("page")[0])
