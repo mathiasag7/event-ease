@@ -5,14 +5,13 @@ from django.conf import settings
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, QueryDict
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
 from gcsa.event import Event
@@ -23,23 +22,30 @@ from render_block import render_block_to_string
 from .forms import CalendarCreateEditForm
 from .forms import CalendarSearchForm
 
+CREDENTIALS_DIR = f"{settings.BASE_DIR}/.credentials"
+
 
 def _connect():
-    credentials_path = f"{settings.BASE_DIR}/.credentials/id_token.json"
+    credentials_path = f"{CREDENTIALS_DIR}/id_token.json"
     return GoogleCalendar(credentials_path=credentials_path)
 
 
 def _disconnect() -> None:
-    old_token = f"{settings.BASE_DIR}/.credentials/token.pickle"
+    old_token = f"{CREDENTIALS_DIR}/token.pickle"
     if old_token and os.path.exists(old_token):
         os.remove(old_token)
     return None
 
 
-def pagination(request: HttpRequest, objects, number: int = 15):
+def pagination(request: HttpRequest, objects, number: int = 15) -> QueryDict:
+    parm_copy: QueryDict = request.GET.copy()
+    try:
+        page_number = int(parm_copy.pop("page")[0])
+    except KeyError:
+        page_number = 1
+    request.GET = parm_copy
+
     pages = Paginator(objects, number)
-    page_number = request.GET.get("page", 1)
-    page_number = page_number
 
     try:
         events = pages.get_page(page_number)  # returns the desired page object
@@ -58,8 +64,8 @@ def pagination(request: HttpRequest, objects, number: int = 15):
 def calendar_form_view(form, gc):
     _today = dt.datetime.now().date()
     search = form.cleaned_data.get("search", "")
-    start = form.cleaned_data.get("start")
-    end = form.cleaned_data.get("end")
+    start = form.cleaned_data.get("start", None)
+    end = form.cleaned_data.get("end", None)
     return gc.get_events(
         time_min=start,
         time_max=end,
@@ -71,22 +77,20 @@ def calendar_form_view(form, gc):
 
 def list_event(request: HttpRequest) -> HttpResponse:
     gc = _connect()
-    _today = dt.datetime.now().date()
-    events = gc.get_events(
-        time_min=_today,
-        time_max=_today.replace(day=31, month=12),
-    )
-    form = CalendarSearchForm(
-        request.GET or None,
-        initial={"start": _today, "end": _today.replace(day=31, month=12)},
-    )
+    events = gc.get_events()
+    form = CalendarSearchForm(request.GET)
     if form.is_valid():
         events = calendar_form_view(form, gc)
     events = list(events)
     objects = pagination(request, events)
     context = {"events": objects, "form": form}
+
     if request.headers.get("HX-Request"):
-        return HttpResponse(render_block_to_string("calendars/list.html", "events_result", context, request))
+        return HttpResponse(
+            render_block_to_string(
+                "calendars/list.html", "events_result", context, request
+            )
+        )
     return TemplateResponse(request, "calendars/list.html", context)
 
 
@@ -139,11 +143,6 @@ def create_event(request: HttpRequest) -> HttpResponse:
     )
 
 
-# def recurrence(request: HttpRequest) -> HttpResponse:
-#     form = CalendarCreateEditForm(initial=request.GET, context={"add_custom_recurrence": request.GET.get("add_custom_recurrence")})
-#     return HttpResponse(as_crispy_form(form))
-
-
 # TODO Rename this here and in `update_event`
 def update_changed_event(form, event, gc):
     event.summary = form.cleaned_data.get("summary")
@@ -193,7 +192,6 @@ def update_event(request: HttpRequest, event_id: str) -> HttpResponse:
 
 
 @require_POST
-@csrf_exempt
 def delete_event(request: HttpRequest, event_id: str) -> HttpResponse:
     gc = _connect()
     try:

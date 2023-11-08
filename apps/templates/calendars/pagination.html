@@ -1,53 +1,48 @@
-
 <div class="d-flex justify-content-between align-items-center mt-3">
     <span><i class="bi bi-info-circle text-primary mt-2 pe-1"></i>
-    {{ events.paginator.count }}
-    {% if events.paginator.count == 0 %}
+    {{ objects.paginator.count }}
+    {% if  objects.paginator.count == 0 %}
         trouvé
     {% else %}
-        trouvé{{ events.paginator.count|pluralize }}
+        trouvé{{ objects.paginator.count|pluralize }}
     {% endif %}
     </span>
-    {% if events.paginator.num_pages > 1 %}
+    {% if objects.paginator.num_pages > 1 %}
         <nav aria-label="...">
             <ul class="pagination mb-0">
-                {% if events.has_previous %}
+                {% if objects.has_previous %}
                     <li class="page-item">
-                        <a href="?page={{ events.previous_page_number }}"
+                        <a href="?page={{ objects.previous_page_number }}&{{ request.GET.urlencode }}"
                         class="page-link"
-                        aria-label="Previous">
-                        <i class="bi bi-chevron-double-left"></i>
-                    </a>
+                        aria-label="Previous">&laquo;</a>
                     </li>
                 {% endif %}
-                {% for num in events.adjusted_elided_pages %}
-                    {% if num == events.paginator.ELLIPSIS %}
+                {% for num in objects.adjusted_elided_pages %}
+                    {% if num == objects.paginator.ELLIPSIS %}
                         <li class="page-item">
                             <a href="#" class="page-link">{{ num }}</a>
                         </li>
                     {% else %}
-                        {% if events.number == num %}
+                        {% if objects.number == num %}
                             <li class="page-item active">
-                                <a class="page-link">{{ events.number }}</a>
+                                <a class="page-link">{{ objects.number }}</a>
                             </li>
                         {% else %}
                             <li class="page-item">
-                                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                                <a href="?page={{ num }}&{{ request.GET.urlencode }}" class="page-link">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-                {% if events.has_next %}
+                {% if objects.has_next %}
                     <li class="page-item">
-                        <a href="?page={{ events.next_page_number }}"
+                        <a href="?page={{ objects.next_page_number }}&{{ request.GET.urlencode }}"
                         class="page-link"
-                        aria-label="Next">
-                        <i class="bi bi-chevron-double-right"></i>
-                    </a>
+                        aria-label="Next">&raquo;</a>
                     </li>
                 {% endif %}
             </ul>
         </nav>
     {% endif %}
     </div>
-
+    

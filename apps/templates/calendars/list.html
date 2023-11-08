@@ -21,10 +21,6 @@
         </div>
             <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" id="form" hx-get="." hx-target="#events_list" hx-swap="outerHTML" hx-trigger="change, keyup delay:200ms">
                 {{ form | crispy }}
-                {% comment %} <div class="mb-3">
-                     <label class="form-label">.</label> 
-                <button class="form-control btn btn-primary" type="submit">Search</button> 
-                </div> {% endcomment %}
             </form>
         {% if event_search is not None %}
             Search: {{ event_search | safe }}
@@ -32,10 +28,11 @@
         <div>
             
             {% block events_result %}
-                <div class="row row-cols-1 row-cols-md-4 g-4" id="events_list">
+            <div id="events_list">
+                <div class="row row-cols-1 row-cols-md-4 g-2">
                     {% for event in events %}
                         <div class="col">
-                            <div class="card h-100" style="{% event_color color_id=event.color_id %};">
+                            <div class="card h-100" style="{% event_color event.color_id %};">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ event.summary|default:"" | capfirst }}</h6>
                                     {% if event.description %}
@@ -65,8 +62,8 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% include "calendars/pagination.html" with objects=events %}
+            </div>
             {% endblock events_result %}
-                
-            {% include "calendars/pagination.html" %}
         </div>
 {% endblock content %}

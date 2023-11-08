@@ -26,6 +26,7 @@ django==4.2.6
 django-browser-reload==1.11.0
 django-crispy-forms==2.1
 django-extensions==3.2.3
+django-filter==23.3
 django-forms-dynamic==1.0.0
 django-htmx==1.17.0
 django-recurrence==1.11.1

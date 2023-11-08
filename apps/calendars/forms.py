@@ -1,4 +1,7 @@
-import datetime
+import datetime as dt
+import calendar
+from random import choice
+from typing import Any
 
 from django import forms
 from dynamic_forms import DynamicField
@@ -45,8 +48,19 @@ COLOR_VALUES = {
     "BLUEBERRY": "#5484ED",
     "BASIL": "#51B749",
     "TOMATO": "#DC2127",
-    
 }
+
+
+def _next_month(now):
+    date = now + dt.timedelta(days=calendar.monthrange(now.year, now.month)[1])
+    start = now.replace(day=1)
+    end = now.replace(
+        day=calendar.monthrange(now.year, now.month + 1)[1],
+        month=now.month + 1 if now.month < 12 else 1,
+        year=date.year if now.month < 12 else now.year + 1,
+    )
+    return start, end
+
 
 class CalendarSearchForm(forms.Form):
     search = forms.CharField(
@@ -72,9 +86,70 @@ class CalendarSearchForm(forms.Form):
         ),
     )
 
+    options = forms.ChoiceField(
+        choices=[
+            ("two_years", "2 years"),
+            ("this_week", "This week"),
+            ("next_week", "Next week"),
+            ("this_month", "This month"),
+            ("next_month", "Next month"),
+            ("this_year", "This year"),
+            ("next_year", "Next year"),
+            ("five_years", "5 years"),
+            ("ten_years", "10 years"),
+        ],
+        initial="all",
+        label="Options",
+        required=False,
+    )
+
+    def clean(self):
+        now = dt.datetime.now().date()
+        cleaned_data = super().clean()
+        options = cleaned_data.get("options")
+        start = cleaned_data.get("start")
+        end = cleaned_data.get("end")
+        search = cleaned_data.get("search")
+        if start is None and end is None:
+            print(options)
+            if options == "two_year":
+                start, end = now.replace(year=now.year, month=1, day=1), now.replace(
+                    year=now.year + 2, month=12, day=31
+                )
+            elif options == "this_week":
+                start = now - dt.timedelta(days=now.weekday())
+                end = start + dt.timedelta(days=6)
+            elif options == "next_week":
+                start = now + dt.timedelta(days=7 - now.weekday())
+                end = start + dt.timedelta(days=6)
+            elif options == "this_month":
+                start, end = now.replace(day=1), now.replace(
+                    day=calendar.monthrange(now.year, now.month)[1]
+                )
+            elif options == "next_month":
+                start, end = _next_month(now)
+            elif options == "this_year":
+                start, end = now.replace(month=1, day=1), now.replace(month=12, day=31)
+            elif options == "next_year":
+                start, end = now.replace(
+                    year=now.year + 1, month=1, day=1
+                ), now.replace(year=now.year + 1, month=12, day=31)
+            elif options == "five_years":
+                start, end = now.replace(year=now.year, month=1, day=1), now.replace(
+                    year=now.year + 5, month=12, day=31
+                )
+            elif options == "ten_years":
+                start, end = now.replace(year=now.year, month=1, day=1), now.replace(
+                    year=now.year + 10, month=12, day=31
+                )
+            return {
+                "search": search,
+                "start": start,
+                "end": end,
+            }
+
 
 class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
-
     from django.urls import reverse_lazy
 
     summary = forms.CharField(
@@ -118,7 +193,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
         if not start and not recurrence:
             raise forms.ValidationError("Start or recurrence is required.")
         elif start:
-            if start < datetime.datetime.now(tz=start.tzinfo):
+            if start < dt.datetime.now(tz=start.tzinfo):
                 raise forms.ValidationError("Start must be in the future.")
             if end and start > end:
                 raise forms.ValidationError("Start must be before end.")

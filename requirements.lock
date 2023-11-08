@@ -8,6 +8,7 @@
 
 -e file:.
 asgiref==3.7.2
+autoflake==2.2.1
 beautiful-date==2.3.0
 cachetools==5.3.1
 certifi==2023.7.22
@@ -18,6 +19,7 @@ dateparser==1.1.8
 distlib==0.3.7
 django==4.2.6
 django-crispy-forms==2.1
+django-filter==23.3
 django-forms-dynamic==1.0.0
 django-htmx==1.17.0
 django-recurrence==1.11.1
@@ -41,6 +43,7 @@ pre-commit==3.5.0
 protobuf==4.24.3
 pyasn1==0.5.0
 pyasn1-modules==0.3.0
+pyflakes==3.1.0
 pyparsing==3.1.1
 python-dateutil==2.8.2
 pytz==2023.3.post1
