@@ -1,3 +1,3 @@
-# dj-google-apis
+# event-ease
 
 Describe your project here.
