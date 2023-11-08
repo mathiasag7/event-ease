@@ -2,9 +2,6 @@
 
 {% load static %}
 {% load crispy_forms_tags %}
-{% load event_colors %}
-{% block extra_css %}
-{% endblock extra_css %}
 
 {% block content %}
 <h4>Calendar Event Form</h4>
@@ -22,30 +19,7 @@
 {% endblock content %}
 
 {% block tom_select %}
-    <script src="{% static 'js/colors.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.select, .selectmultiple').forEach((el) => {
-                let settings = {
-                    placeholder: 'Rechercher ou sélectionner',
-                    render: {
-                        option: function(data, escape) {
-                            bg_color= "background-color: " + eventColors[data.text] + ";";
-                            // Define custom styles for each option/ Customize this as needed
-                            return '<div style="' + bg_color + '">' + escape(data.text) + '</div>';
-                        }
-                    }
-                };
-                var select = new TomSelect(el, settings);
-                console.log(select)
-                //select.on('initialize', handler);
-            });
-    
-            document.querySelectorAll('.ts-wrapper').forEach((el) => {
-                el.classList.remove('form-select');
-    
-            });
-        });
-    </script>
+    <script src="{% static 'calendars/js/colors.js' %}"></script>
+    <script src="{% static 'calendars/js/tom_select_options_color.js' %}"></script>
 {% endblock tom_select %}
     
