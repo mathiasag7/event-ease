@@ -23,13 +23,12 @@ from render_block import render_block_to_string
 from .forms import CalendarCreateEditForm
 from .forms import CalendarSearchForm
 
-CREDENTIALS_DIR = f"{settings.BASE_DIR}/.credentials"
+CREDENTIALS_DIR = Path(".credentials/id_token.json")
 
 
 def _connect():
-    credentials_path = Path(f"{CREDENTIALS_DIR}/id_token.json")
-    if credentials_path:
-        return GoogleCalendar(credentials_path=credentials_path)
+    if CREDENTIALS_DIR.exists():
+        return GoogleCalendar(credentials_path=CREDENTIALS_DIR)
     else:
         # let the sdk dectect the credentials
         return GoogleCalendar()
