@@ -1,6 +1,6 @@
 [project]
-name = "event-ease"
-version = "0.1.1"
+name = "calendar-event-ease"
+version = "0.1.0"
 description = "Simpler interface to manage your google calendar events"
 authors = [
     { name = "mathiasag7", email = "mathiasag07@gmail.com" }
