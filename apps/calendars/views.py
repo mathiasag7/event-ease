@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+from pathlib import Path
 
 from django.conf import settings
 from django.core.paginator import EmptyPage
@@ -26,8 +27,12 @@ CREDENTIALS_DIR = f"{settings.BASE_DIR}/.credentials"
 
 
 def _connect():
-    credentials_path = f"{CREDENTIALS_DIR}/id_token.json"
-    return GoogleCalendar(credentials_path=credentials_path)
+    credentials_path = Path(f"{CREDENTIALS_DIR}/id_token.json")
+    if credentials_path:
+        return GoogleCalendar(credentials_path=credentials_path)
+    else:
+        # let the sdk dectect the credentials
+        return GoogleCalendar()
 
 
 def _disconnect() -> None:
