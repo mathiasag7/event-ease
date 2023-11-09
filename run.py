@@ -22,7 +22,7 @@ class GunicornApp(BaseApplication):
 
 
 def main():
-    gunicorn_options = {"bind": "127.0.0.1:8000"}
+    gunicorn_options = {"bind": "127.0.0.1:8000", "env": "DJANGO_SETTINGS_MODULE=mo.config.settings"}
 
     gunicorn_app = GunicornApp(application, gunicorn_options)
     gunicorn_app.run()

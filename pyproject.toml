@@ -21,6 +21,7 @@ requires-python = ">= 3.8"
 
 [project.scripts]
 event-ease = 'run:main'
+ev-local = 'manage:main'
 
 
 [build-system]
