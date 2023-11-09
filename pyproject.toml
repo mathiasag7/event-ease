@@ -1,5 +1,5 @@
 [project]
-name = "event-ease"
+name = "event_ease"
 version = "0.1.0"
 description = "Simpler interface to manage your google calendar events"
 authors = [

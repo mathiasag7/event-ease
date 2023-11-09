@@ -2,7 +2,6 @@ import datetime as dt
 import os
 from pathlib import Path
 
-from django.conf import settings
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.core.paginator import Paginator
