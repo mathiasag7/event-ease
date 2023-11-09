@@ -1,7 +1,7 @@
 [project]
 name = "event-ease"
 version = "0.1.0"
-description = "Add your description here"
+description = "Simpler interface to manage your google calendar events"
 authors = [
     { name = "mathiasag7", email = "mathiasag07@gmail.com" }
 ]
@@ -22,11 +22,14 @@ dependencies = [
     "django-render-block>=0.9.2",
     "django-filter>=23.3",
     "autoflake>=2.2.1",
+    "gunicorn>=21.2.0",
 ]
 
 readme = "README.md"
 requires-python = ">= 3.8"
 
+[project.scripts]
+event-ease = 'run:main'
 
 
 [build-system]
