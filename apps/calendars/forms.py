@@ -2,8 +2,6 @@ import datetime as dt
 import calendar
 
 from django import forms
-from dynamic_forms import DynamicField
-from dynamic_forms import DynamicFormMixin
 from apps.calendars.recurrences import clean_recurrence
 from apps.recurrence import forms as f
 
@@ -147,7 +145,7 @@ class CalendarSearchForm(forms.Form):
             }
 
 
-class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
+class CalendarCreateEditForm(forms.Form):
     from django.urls import reverse_lazy
 
     summary = forms.CharField(
@@ -155,8 +153,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
     )
     description = forms.CharField(label="Description", required=False)
 
-    start = DynamicField(
-        forms.DateTimeField,
+    start = forms.DateTimeField(
         label="Start",
         required=False,
         widget=forms.DateTimeInput(
@@ -165,8 +162,7 @@ class CalendarCreateEditForm(DynamicFormMixin, forms.Form):
             }
         ),
     )
-    end = DynamicField(
-        forms.DateTimeField,
+    end = forms.DateTimeField(
         label="End",
         required=False,
         widget=forms.DateTimeInput(
