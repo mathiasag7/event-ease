@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime as dt
 import os
 from pathlib import Path
@@ -40,8 +41,7 @@ def _disconnect() -> None:
     return None
 
 
-def pagination(request: HttpRequest, objects, number: int = 16
-               ) -> QueryDict:
+def pagination(request: HttpRequest, objects, number: int = 16) -> QueryDict:
     parm_copy: QueryDict = request.GET.copy()
     try:
         page_number = int(parm_copy.pop("page")[0])
@@ -78,6 +78,12 @@ def calendar_form_view(form, gc):
         order_by="startTime",
     )
 
+def _summary(events: list) -> dict:
+    dt: dict = defaultdict(int)
+    for _ in events:
+        dt[_.summary] +=1
+    return {_: v for _, v in dt.items() if v > 4}
+
 
 def list_event(request: HttpRequest) -> HttpResponse:
     gc = _connect()
@@ -86,8 +92,9 @@ def list_event(request: HttpRequest) -> HttpResponse:
     if form.is_valid():
         events = calendar_form_view(form, gc)
     events = list(events)
+    summary = _summary(events)
     objects = pagination(request, events)
-    context = {"events": objects, "form": form}
+    context = {"events": objects, "form": form, "summary": summary.items()}
 
     if request.headers.get("HX-Request"):
         return HttpResponse(

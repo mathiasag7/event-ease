@@ -7,6 +7,7 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'htmx/css/htmx_indicator.css' %}">
+    <link rel="stylesheet" href="{% static 'calendars/css/list.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -20,50 +21,78 @@
                 </a>
             </div>
         </div>
-            <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" id="form" hx-get="." hx-target="#events_list" hx-swap="outerHTML" hx-trigger="change, keyup delay:200ms">
+        <div class="row">
+            <div class="col-md-3 col-sm-12"></div>
+            <div class="col-md-9 col-sm-12">
+                <form class="row row-cols-1 row-cols-md-4 g-4 mb-3" id="form" hx-get="." hx-target="#events_list" hx-swap="outerHTML" hx-trigger="change, keyup delay:200ms">
                 {{ form | crispy }}
             </form>
-        {% if event_search is not None %}
-            Search: {{ event_search | safe }}
-        {% endif %}
+            </div>
+        </div>
+            
         <div>
             
             {% block events_result %}
-            <div id="events_list">
-                <div class="row row-cols-1 row-cols-md-4 g-2">
-                    {% for event in events %}
-                        <div class="col">
-                            <div class="card h-100" style="{% event_color event.color_id %};">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ event.summary|default:"" | capfirst }}</h6>
-                                    {% if event.description %}
-                                        <p class="card-text">
-                                            {{ event.description }}
-                                        </p>
-                                    {% endif %}
-                                    <small>
-                                        Start date: {{ event.start | date }} <br/>
-                                        End date: {{ event.end | date }} <br/>
-                                        Created by: {{ event.creator }} <br/>
+            <div id="events_list" class="row">
+                <div class="col-md-3 col-sm-12 mb-3">
+                    <ul class="list-group">
+                        {% for key, value in summary %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="#"  hx-get="{% url 'calendars:list' %}?search={{ key }}" hx-target="#events_list" hx-swap="outerHTML" {% if form.search.value == key %} class="list-group-item list-group-item-action active" {% endif %} class="list-group-item list-group-item-action" >
+                                    {{ key | capfirst }}
+                                    <span class="badge bg-primary rounded-pill">{{ value }}</span>
+                                </a>
+                            </li>
+                            {% if form.search.value is not None %}
+                                <a href="#"  hx-get="{% url 'calendars:list' %}" hx-target="#events_list" hx-swap="outerHTML" class="list-group-item list-group-item-action text-decoration-underline">
+                                    View all
+                                </a>
+                            {% endif %} 
+                        {% endfor %}
+{% comment %} 
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="#" class="list-group-item list-group-item-action text-primary text-decoration-underline">
+                                Voir plus
+                            </a>
+                        </li> {% endcomment %}
+                    </ul>
+                </div>
+                <div class="col-md-9">
+                    <div class="row row-cols-1 row-cols-md-4 g-2">
+                        {% for event in events %}
+                            <div class="col">
+                                <div class="card h-100" style="{% event_color event.color_id %};">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ event.summary|default:"" | capfirst }}</h6>
+                                        {% if event.description %}
+                                            <p class="card-text">
+                                                {{ event.description }}
+                                            </p>
+                                        {% endif %}
+                                        <small>
+                                            Start date: {{ event.start | date }} <br/>
+                                            End date: {{ event.end | date }} <br/>
+                                            Created by: {{ event.creator }} <br/>
+                                        </small>
+                                    </div>
+                                    <small class="d-flex justify-content-end mb-2 me-2">
+                                        <a role="button" href="{% url 'calendars:update' event.id %}" class="btn btn-sm btn-outline-primary ms-2">
+                                            Edit
+                                        </a>
+
+                                        <a role="button" hx-indicator="#delete_indicator_{{ event.id }}" hx-confirm="Êtes-vous sure de vouloir supprimer cet évènement ? " hx-post="{% url 'calendars:delete' event.id %}" class="btn btn-sm btn-outline-danger ms-2">
+                                            <div id="delete_indicator_{{ event.id }}" class="htmx-indicator spinner-border spinner-border-sm" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            Delete
+                                        </a>
                                     </small>
                                 </div>
-                                <small class="d-flex justify-content-end mb-2 me-2">
-                                    <a role="button" href="{% url 'calendars:update' event.id %}" class="btn btn-sm btn-outline-primary ms-2">
-                                        Edit
-                                    </a>
-
-                                    <a role="button" hx-indicator="#delete_indicator_{{ event.id }}" hx-confirm="Êtes-vous sure de vouloir supprimer cet évènement ? " hx-post="{% url 'calendars:delete' event.id %}" class="btn btn-sm btn-outline-danger ms-2">
-                                        <div id="delete_indicator_{{ event.id }}" class="htmx-indicator spinner-border spinner-border-sm" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                        Delete
-                                    </a>
-                                </small>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% include "calendars/pagination.html" with objects=events %}
                 </div>
-                {% include "calendars/pagination.html" with objects=events %}
             </div>
             {% endblock events_result %}
         </div>
